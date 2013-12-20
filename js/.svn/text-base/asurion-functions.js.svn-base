@@ -1,0 +1,281 @@
+//**********  Asurion jQuery Functions  **********//
+//**********  Created By: Bryan Haddock **********//
+//**********  Last Updated: 07-05-2013  **********//
+
+/**
+* add Feader & Footer
+*/
+
+function addHeaderFooter(headerfile, footerfile) {
+	$('body').prepend("<div id='header'></div>");
+	$('#header').load("html_includes/" + headerfile + ".html");
+	$('body').wrapInner("<div class='pre-footer'></div>");
+	var windowheight = $('body').height();
+	$('.pre-footer').append('<div class="push"></div>');
+	$('body').append("<div id='footer'></div>");
+	$('#footer').load("html_includes/" + footerfile + ".html");
+}
+
+/**
+* Email Address Checker
+* @param {email address} emailAddress 
+*/
+
+function isValidEmailAddress(emailAddress) {
+    var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+    return pattern.test(emailAddress);
+};
+
+function validateThisField(id){
+	$('#' + id).removeClass('not-validated');
+	$('#' + id).prev('span').remove();
+	$('#' + id).next('.err').remove();
+	$('#' + id).addClass('validated');
+	$('#' + id).before('<span class="icon-checkmark textbox-icon"></span>');	
+}
+
+function unvalidateThisField(id,errmsg){
+	$('#' + id).removeClass('validated');
+	$('#' + id).prev('span').remove();	
+	$('#' + id).addClass('not-validated');
+	$('#' + id).before('<span class="icon-close textbox-icon"></span>');
+	$('#' + id).after('<div class="err">' + errmsg + '</div>');
+}
+/**
+* Spaztastik Validation
+* This function performs validation for all input fields with 'required' class
+* Attributes that can be used for each input field are:
+	- type (default: text)
+		: tel - number
+		: email - email address
+	- errmsg (default: 'Please try again.')
+		: custom error message text
+	- valtype (default: 'notempty' - checks to make sure input field is not empty)
+		: inputlength - input is validated when length of input equals 'inputlength' attribute value
+		: matchval - input is validated when its contents are equal to value of 'matchval' (selector) value
+	- inputlength - positve nonzero integer (used by valtype='inputlength')
+	- matchval - selector used to compare values (used by valtype='matchval')
+*/
+
+//<input type="text" name="first-name" placeholder="First name" id="first-name" class="span6 required lockable" valtype="notempty" errmsg="Please try again using a valid format containing only letters, hyphens and spaces." />
+
+
+function spazTastikVal() {
+	$('input, textarea').keyup(function() {
+		if($(this).hasClass('required')){
+			var id = $(this).attr('id');
+			var fieldtype = ($(this).attr('type') == undefined)? 'text' : $(this).attr('type');
+			var errmsg = ($(this).attr('errmsg') == undefined)? 'Please try again.' : $(this).attr('errmsg');
+			var valtype = ($(this).attr('valtype') == undefined)? 'notempty' : $(this).attr('valtype');
+			var inputlength = ($(this).attr('inputlength') == undefined)? 12 : $(this).attr('inputlength');
+			var group = $(this).attr('group');
+			var thisvalue = $(this).val();
+			// valtype exception for 'tel' fieldtype
+			if((fieldtype == "tel") && (valtype == "notempty")){ var valtype = "inputlength"; }
+			//alert(valtype);
+			if((fieldtype == "text") && (valtype == "notempty")){
+				if(thisvalue.length > 0){
+					if(!$(this).hasClass('validated')){
+						validateThisField(id);
+					}
+				}else{
+					if(!$(this).hasClass('not-validated')){
+						unvalidateThisField(id,errmsg);
+					}
+				}
+			}
+			// for fieldtype 'tel', valtype 'notempty' is the same as valtype 'inputlength' with inputlength attribute = 12
+			if((fieldtype == "tel") && (valtype == "inputlength")){
+				if((thisvalue.length == inputlength) && (!$(this).hasClass('validated'))){
+					//if(!$(this).hasClass('validated')){
+						validateThisField(id);
+					//}
+				}
+				/*
+				else{
+					if(!$(this).hasClass('not-validated')){
+						unvalidateThisField(id,errmsg);
+					}
+				}
+				*/
+			}
+			if((fieldtype == "email") && (valtype == "notempty")){
+				if(isValidEmailAddress(thisvalue)) {
+					if(!$(this).hasClass('validated')){
+						validateThisField(id);
+					}
+				}else{
+					if(!$(this).hasClass('not-validated')){
+						unvalidateThisField(id,errmsg);
+					}
+				}
+			}
+			if((fieldtype == "email") && (valtype == "matchval")){
+				var matchval = $(this).attr('matchval');
+				if((thisvalue == $(matchval).val()) && (isValidEmailAddress(thisvalue))) {
+					if(!$(this).hasClass('validated')){
+						validateThisField(id);
+					}
+				}else{
+					if(!$(this).hasClass('not-validated')){
+						unvalidateThisField(id,errmsg);
+					}
+				}
+			}
+		}
+
+		var required = $('input.required[group="' + group + '"], textarea.required[group="' + group + '"]').length;
+		var validated = $('input.validated[group="' + group + '"], textarea.validated[group="' + group + '"]').length;		
+		if(required - validated == 0){
+			$('.btn[group="' + group + '"]').removeClass('disabled').addClass('active');
+		}
+	});
+
+	$('input.not-validated, textarea.not-validated').focus(function(){
+		$(this).removeClass('not-validated');
+		$(this).prev('.textbox-icon').remove();
+		$(this).next('.err').remove();
+	});
+
+	$('input, textarea').live('focus',function(){
+		$(this).removeClass('not-validated');
+		$(this).removeClass('validated');
+		$(this).prev('.textbox-icon').remove();
+		$(this).next('.err').remove();
+	});
+}
+
+/**
+* Form Validation
+*/
+
+function requiredInputValidation() {
+	$('.required').blur(function() {
+		var inputvalue = $(this).val();
+		var errmsg = $(this).attr('errmsg');
+		if( inputvalue == $(this)[0].defaultValue && inputvalue.length == 0 ){
+			$(this).addClass('not-verified');
+			$(this).before('<span class="icon-close textbox-icon"></span>');
+			$(this).after('<div class="err">' + errmsg + '</div>');
+		}else{
+			$(this).addClass('verified');
+			$(this).before('<span class="icon-checkmark textbox-icon"></span>');
+		}
+	});
+}
+
+/**
+* Require Match Validation
+* @param {Number} a 
+* @param {Number} b
+* @return {Number} sum
+*/
+
+function requiredMatchValidation() {
+	$('.required-match').focus(function() {
+		$(this).removeClass('not-verified').removeClass('verified');
+		$(this).prev('.textbox-icon').remove();
+		$(this).next('.err').remove();
+		$(this).val('');
+		$('.err.submit').remove();
+	});
+	$('.required-match').blur(function() {
+		$(this).each(function() {
+			var inputvalue = $(this).val();
+			var errmsg = $(this).attr('errmsg');
+			var matchwith = $(this).attr('matchwith');
+			var comparevalue = $(matchwith)
+			if( inputvalue != $('#your-email').val() || ( inputvalue == $(this)[0].defaultValue && inputvalue.length == 0 )){
+				$(this).addClass('not-verified');
+				$(this).before('<span class="icon-close textbox-icon"></span>');
+				$(this).after('<div class="err">' + errmsg + '</div>');
+			}else{
+				$(this).addClass('verified');
+				$(this).before('<span class="icon-checkmark textbox-icon"></span>');				
+			}
+		});
+	});
+}
+
+/**
+* Activate Submit
+* @param {Selector} submitselector
+*/
+
+function activateSubmit(submitselector) {
+	$('.required,.required-match').focus(function() {
+		$(this).removeClass('not-verified').removeClass('verified');
+		$(this).prev('.textbox-icon').remove();
+		$(this).next('.err').remove();
+		$(this).val('');
+		$('.err.submit').remove();
+		if($(submitselector).hasClass('active')){
+			$(submitselector).removeClass('active').addClass('disabled');
+		}
+	});
+	$('.required,.required-match').blur(function() {
+		var nreq = $('input.required,input.required-match').length;
+		var nver = $('input.verified,input.required-match.verified').length;
+		if (nreq == nver){
+			$(submitselector).removeClass('disabled').addClass('active');
+		}
+	});
+}
+
+/**
+* include files - I don't think this is necessary anymore - BWH
+*/
+
+/*
+function includeFiles() {
+	document.createElement('include'); //crutch for IE
+	$('include').each(function() {
+		var includefile = $(this).attr('file');
+		$('<link/>', { rel: 'stylesheet', href: 'css/' + includefile + '.css' }).appendTo('head');		
+		$(this).load("html_includes/" + includefile + ".html");
+	});
+}
+*/
+
+/**
+* legal modals - no longer necessary b/c we're using bootstrap modals
+*/
+
+/*
+function showLegalModals() {
+	$('.modal-trigger').click(function() {
+		var modal_id = $(this).attr('modal_id');
+		var windowheight = $('#' + modal_id).height();
+		$('#' + modal_id).fadeIn('slow');
+		$('#' + modal_id + ' .modal').fadeIn('fast');
+		if(modal_id != 'contactinfo'){
+			if(windowheight > 480){
+				$('#' + modal_id + ' .modal').css('height',windowheight-200 + 'px');
+				$('#' + modal_id + ' .modal-body').css('height',windowheight-340 + 'px');
+			}else{
+				$('#' + modal_id + ' .modal').css('height',windowheight-20 + 'px');
+				$('#' + modal_id + ' .modal-body').css('height',windowheight-160 + 'px');
+			}
+		}
+		$('body').css('overflow','hidden');
+		$('.pre-footer').addClass('blurz');
+		//$('footer').addClass('blurz');
+	});
+}
+*/
+
+/**
+* close legal modals - no longer necessary b/c we're using bootstrap modals
+*/
+
+/*
+function closeLegalModals() {
+	$('.close-trigger').click(function() {
+		$(this).parents('.modal').fadeOut('fast');
+		$(this).parents('.modal-backdrop').fadeOut('slow');
+		$('body').css('overflow','auto');
+		$('.pre-footer').removeClass('blurz');
+		//$('footer').removeClass('blurz');
+	});
+}
+*/

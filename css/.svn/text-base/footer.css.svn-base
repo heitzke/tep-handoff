@@ -1,0 +1,57 @@
+/* Basic Footer  Styles */
+
+footer {
+  border-top: 3px solid #F8D608;
+  padding: 40px 0 30px 0;
+}
+
+footer .nav li {
+  display: inline-block;
+  line-height: inherit;
+}
+
+footer .nav li a {
+  color: #666;
+  font-size: 12px;
+}
+
+footer .nav li a:hover {
+  color: #F8D608;
+  background: none;
+  -webkit-transition: color .2s ease;
+  -moz-transition: color .2s ease;
+  -ms-transition: color .2s ease;
+  -o-transition: color .2s ease;
+  transition: color .2s ease;
+}
+
+footer .nav > li > a {
+  display: inline-block;
+}
+
+.bullets-between li:before,
+.bullets-between li:before {
+  content: '\2022';
+  padding: 0px 17px 0 15px;
+  font-family: 'Asurion';
+  color: #FADA00;
+}
+
+.bullets-between li:first-child,
+.bullets-between li:first-child{
+  padding: 0;
+}
+
+.bullets-between li:first-child:before,
+.bullets-between li:first-child:before {
+  content: '';
+  padding: 0;
+}
+
+footer .icons img {
+  padding: 0 3px 0 0;
+}
+
+.copyright {
+  font-size: 10px;
+}

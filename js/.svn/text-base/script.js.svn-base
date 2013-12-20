@@ -1,0 +1,74 @@
+$(document).ready(function() {
+    var $first = $('#first');
+    var $second = $('#second');
+    var $third = $('#third');
+    var $fourth = $('#fourth');
+
+    showFirst();
+
+    function showFirst() {
+        var $image = $(".image-container", $first);
+        var $text = $(".text-container", $first);
+        $image.removeClass( "transparent" ).addClass( "opaque moveRight" );
+        $text.removeClass( "transparent" ).addClass( "opaque moveLeft" );
+    }
+
+
+    function showSecond() {
+        var $image = $(".image-container", $second);
+        var $text = $(".text-container", $second);
+        $image.removeClass( "transparent" ).addClass( "opaque moveLeft" );
+        $text.removeClass( "transparent" ).addClass( "opaque moveRight" );
+
+    }
+
+
+    function showThird() {
+        var $image = $(".image-container", $third);
+        var $text = $(".text-container", $third);
+        $image.removeClass( "transparent" ).addClass( "pulse" );
+        $text.removeClass( "transparent" ).addClass( "pulse" );
+
+    }
+
+
+    function showFourth() {
+        var $image = $(".image-container", $fourth);
+        var $text = $(".text-container", $fourth);
+        $image.removeClass( "transparent" ).addClass( "opaque moveDown" );
+        $text.removeClass( "transparent" ).addClass( "opaque moveUp" );
+
+    }
+
+
+    $first.waypoint({
+        handler: function(direction) {
+            if (direction == 'down') {// up, down, left, or right
+                showSecond();
+            }
+        } ,
+        offset: 'bottom-in-view'
+    });
+
+    $second.waypoint({
+        handler: function(direction) {
+            if (direction == 'down') {// up, down, left, or right
+                showThird();
+            }
+        },
+        offset: 'bottom-in-view'
+    });
+
+
+    $third.waypoint({
+        handler: function(direction) {
+            if (direction == 'down') {// up, down, left, or right
+                showFourth();
+            }
+        },
+        offset: 'bottom-in-view'
+    });
+
+
+
+});

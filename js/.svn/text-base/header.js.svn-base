@@ -1,0 +1,32 @@
+$(document).ready(function() {
+	
+	stepnum = $("#step").val();
+
+	if(stepnum==null){
+		$('nav').hide();
+	}
+	
+	if(stepnum==0){
+		$(".steps").hide();
+		$("#progress-bar").addClass("welcome-banner");
+		$("#welcome-text").removeClass("hide");
+	}
+
+	if(stepnum==6){
+		$(".step-6 span.icon").removeClass("icon-checkmark").addClass("icon-thumb");
+	}
+
+	if(stepnum=="custom"){
+		var customh1 = $("#step").attr("customh1");
+		var customh3 = $("#step").attr("customh3");
+		$(".steps").hide();
+		$("#progress-bar").addClass("welcome-banner");
+		$("#welcome-text").removeClass("hide");
+		$("#welcome-text h1").text(customh1);
+		$("#welcome-text h3").text(customh3);
+	}
+
+	$("li.step-"+stepnum).addClass("active");
+	$("li.active").prevAll().addClass("prev");
+	
+});
